@@ -88,6 +88,7 @@ export const SnackbarErrorMessage = () => {
 ```
 
 And then we could add error component created above to anywhere inside app. For example:
+App.tsx
 ```typescript jsx
 import React from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
