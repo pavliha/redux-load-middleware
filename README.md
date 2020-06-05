@@ -25,6 +25,10 @@ contracts.ts
  }
 ```
 
+
+explain options API
+
+
 actions.ts
 ```typescript
 import { LoadAction, PayloadAction } from 'redux-load-middleware'
@@ -32,9 +36,6 @@ import { loginUser } from './api'
 
 type LoginAction = LoadAction<c.LOGIN_USER, LoginResponse>
 type LoginSuccessAction = PayloadAction<c.LOGIN_USER_SUCCESS, LoginResponse>
-
-explain options API
-
 
 export const login = (values: LoginFormValues): LoginAction => ({
   type: c.LOGIN_USER,
@@ -68,7 +69,7 @@ export const SnackbarErrorMessage = () => {
 
   return (
     <div className="snackbar" onClick={handleClose}>
-        {error?.message}
+        {error.message}
     </div>
   )
 }
