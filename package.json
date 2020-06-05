@@ -1,0 +1,44 @@
+{
+  "name": "redux-load-middleware",
+  "version": "0.0.1",
+  "description": "Loading and error handling for react apps",
+  "author": "Pavel Kostiuk",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "license": "ISC",
+  "private": false,
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest --coverage"
+  },
+  "files": [
+    "dist"
+  ],
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5",
+    "@types/jest": "^25.2.3",
+    "@types/lodash.isempty": "^4.4.6",
+    "@types/react-redux": "^7.1.9",
+    "jest": "^26.0.1",
+    "lodash.isempty": "^4.4.0",
+    "rollup": "^2.13.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.2",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.5"
+  }
+
+}

@@ -1,0 +1,28 @@
+{
+  "env": {
+    "jest/globals": true
+  },
+
+  "extends": ["standard", "plugin:prettier/recommended", "plugin:react/recommended", "plugin:jest/recommended"],
+  "plugins": ["@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "@typescript-eslint/adjacent-overload-signatures": "error",
+    "yoda": "off",
+    "react/prop-types": "off",
+    "import/first": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-dupe-class-members": "off",
+    "camelcase": "off",
+    "react/display-name": "off"
+  },
+  "globals": {
+    "fetch": false
+  }
+}
