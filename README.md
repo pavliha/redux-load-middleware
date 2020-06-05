@@ -23,24 +23,20 @@ export const loginUser = async (values: LoginFormValues): Promise<LoginResponse>
 }
 ```
 
-why implements, extends
+Defined errors will be caught by `loadMiddleware` and then be added to `_status: statusReducer` where component can catch thrown errors
 
 contracts.ts
 ```typescript
-import { Loader } from 'redux-load-middleware'
+import { Loader, AppError } from 'redux-load-middleware'
  
 export class ProgressBarLoader implements Loader {
    readonly name = 'ProgressBarLoader'
  }
  
-export class SnackbarError extends Error { // Just regular `Error` with name added
+export class SnackbarError extends AppError { // Just regular `Error` with name added
    readonly name = 'SnackbarError'
  }
 ```
-
-
-explain options API
-
 
 actions.ts
 ```typescript
@@ -59,6 +55,12 @@ export const login = (values: LoginFormValues): LoginAction => ({
   }
 })
 ```
+
+### Options API
+| Property        | Type                 | Description                           |
+| -------------   |:-------------        |:-------------                         |
+| loader          |```Type<Loader>```    | Should be instanceof Loader interface |
+| error           | ```Type<AppError>``` | Should be instanceof AppLoader class  |
 
 This error component via `useError` hook will depend on `_status` state which in turn `loadMiddleware` would update based on promise from `loginUser` http request
 
