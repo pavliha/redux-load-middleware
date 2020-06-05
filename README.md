@@ -13,7 +13,7 @@ export const loginUser = async (values: LoginFormValues): Promise<LoginResponse>
     return loginResponse
   } catch (error) {
     if(error.code === 401){
-      throw new FormError('Authorization failed.Please check your credentials')
+      throw new FormError(error.message || 'Authorization failed. Please check your credentials')
     }
     if(error.code === 500){
       throw new CoverError('Internal server error. Please try again later')
