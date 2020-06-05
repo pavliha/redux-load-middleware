@@ -11,6 +11,20 @@ export const loginUser = async (values: LoginFormValues):Promise<LoginResponse> 
   return await http.post('/login',values)
 }
 ```
+
+contracts.ts
+```typescript
+ import { AppError, Loader } from 'redux-load-middleware'
+ 
+ export class ProgressBarLoader implements Loader {
+   readonly name = 'ProgressBarLoader'
+ }
+ 
+ export class SnackbarError extends AppError {
+   readonly name = 'SnackbarError'
+ }
+```
+
 actions.ts
 ```typescript
 import { LoadAction, PayloadAction } from 'redux-load-middleware'
@@ -27,20 +41,6 @@ export const login = (values: LoginFormValues): LoginAction => ({
     error: new ShackbarLoader()
   }
 })
-```
-
-
-contracts.ts
-```typescript
- import { AppError, Loader } from 'redux-load-middleware'
- 
- export class ProgressBarLoader implements Loader {
-   readonly name = 'ProgressBarLoader'
- }
- 
- export class SnackbarError extends AppError {
-   readonly name = 'SnackbarError'
- }
 ```
 
 This error component via `useError` hook will depend on `_status` state which in turn `loadMiddleware` would update based on promise from `loginUser` http request
