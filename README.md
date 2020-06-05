@@ -7,11 +7,11 @@ Redux Load Middleware enables simple, yet robust handling of async action creato
 
 api.ts
 ```typescript
-export const loginUser = async (values: LoginFormValues):Promise<LoginResponse> => {
-  return await http.post('/login',values)
+export const loginUser = async (values: LoginFormValues): Promise<LoginResponse> => {
+  return await http.post('/login', values)
 }
 ```
-
+implements ,extends
 contracts.ts
 ```typescript
  import { AppError, Loader } from 'redux-load-middleware'
@@ -33,12 +33,15 @@ import { loginUser } from './api'
 type LoginAction = LoadAction<c.LOGIN_USER, LoginResponse>
 type LoginSuccessAction = PayloadAction<c.LOGIN_USER_SUCCESS, LoginResponse>
 
+explain options API
+
+
 export const login = (values: LoginFormValues): LoginAction => ({
   type: c.LOGIN_USER,
   load: loginUser(values),
   options:{
     loader: new ProgressBarLoader(),
-    error: new ShackbarLoader()
+    error: new ShackbarError('custom error message')
   }
 })
 ```
@@ -61,7 +64,7 @@ export const SnackbarErrorMessage = () => {
     dispatch(clearStatus())
   }
   
-  if(!error) return  null
+  if(!error) return null
 
   return (
     <div className="snackbar" onClick={handleClose}>
