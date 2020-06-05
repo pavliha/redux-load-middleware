@@ -8,10 +8,13 @@ Redux Load Middleware enables simple, yet robust handling of async action creato
 api.ts
 ```typescript
 export const loginUser = async (values: LoginFormValues): Promise<LoginResponse> => {
-  return await http.post('/login', values)
+  const loginResponse = await http.post('/login', values)
+  return loginResponse
 }
 ```
-implements ,extends
+
+why implements ,extends
+
 contracts.ts
 ```typescript
  import { AppError, Loader } from 'redux-load-middleware'
@@ -126,8 +129,8 @@ const store = createStore(reducers, compose(applyMiddleware(loadMiddleware)))
 - Add `statusReducer` to the your reducers
 ```typescript
 import { combineReducers } from 'redux'
-import auth from './auth/reducer'
 import { statusReducer } from 'redux-load-middleware'
+import auth from './auth/reducer'
 
 const reducer = combineReducers({
   _status: statusReducer,
