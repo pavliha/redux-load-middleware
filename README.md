@@ -35,7 +35,7 @@ import { Loader, AppError } from 'redux-load-middleware'
     }
  */
 
-// We need to extend all Errors from AppError because loadMiddleware would check if it instanceOf AppError
+// We need to extend all Errors, we want to use inside React Components, from AppError because loadMiddleware would check if it instanceOf AppError
 
 export class ProgressBarLoader implements Loader {
    readonly name = 'ProgressBarLoader'
@@ -45,6 +45,15 @@ export class SnackbarError extends AppError { // Just regular `Error` with name 
    readonly name = 'SnackbarError'
  }
 ```
+
+While promise is pending `SHOW_LOADER` action would be dispatched with loader from `options` property.
+
+Similar to to [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware).
+
+After promise is successfully resolved `loadMiddleware` would append `_SUCCESS` suffix and dispatch `LOGIN_USER_SUCCESS` action.
+
+In case promise was rejected middleware would dispatch  `SHOW_ERROR` action that updates `_status` state.
+
 
 actions.ts
 ```typescript
@@ -56,7 +65,7 @@ type LoginSuccessAction = PayloadAction<c.LOGIN_USER_SUCCESS, LoginResponse>
 
 export const login = (values: LoginFormValues): LoginAction => ({
   type: c.LOGIN_USER,
-  load: loginUser(values),
+  load: loginUser(values), // 
   options:{
     loader: new ProgressBarLoader(),
     error: new ShackbarError('custom error message') // fallback error in case general Error was thrown
