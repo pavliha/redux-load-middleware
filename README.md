@@ -28,7 +28,15 @@ Defined errors will be caught by `loadMiddleware` and then be added to `_status:
 contracts.ts
 ```typescript
 import { Loader, AppError } from 'redux-load-middleware'
- 
+
+ /*
+    export abstract class AppError extends Error {
+      abstract readonly name: string
+    }
+ */
+
+// We need to extend all Errors from AppError because loadMiddleware would check if it instanceOf AppError
+
 export class ProgressBarLoader implements Loader {
    readonly name = 'ProgressBarLoader'
  }
