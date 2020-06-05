@@ -23,7 +23,7 @@ export const loginUser = async (values: LoginFormValues): Promise<LoginResponse>
 }
 ```
 
-Defined errors will be caught by `loadMiddleware` and then be added to `_status: statusReducer` where component can catch thrown errors
+Defined errors will be caught by `loadMiddleware` and then be added to `_status: statusReducer` where component can catch thrown errors with `useError` hook
 
 contracts.ts
 ```typescript
