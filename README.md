@@ -51,7 +51,7 @@ export const login = (values: LoginFormValues): LoginAction => ({
   load: loginUser(values),
   options:{
     loader: new ProgressBarLoader(),
-    error: new ShackbarError('custom error message')
+    error: new ShackbarError('custom error message') // fallback error in case general Error was thrown
   }
 })
 ```
