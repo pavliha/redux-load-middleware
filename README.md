@@ -47,11 +47,8 @@ export class SnackbarError extends AppError { // Just regular `Error` with name 
 ```
 
 While promise is pending `SHOW_LOADER` action would be dispatched with loader from `options` property.
-
 Similar to to [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware).
-
 After promise is successfully resolved `loadMiddleware` would append `_SUCCESS` suffix and dispatch `LOGIN_USER_SUCCESS` action.
-
 In case promise was rejected middleware would dispatch  `SHOW_ERROR` action that updates `_status` state.
 
 
