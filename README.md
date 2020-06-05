@@ -41,7 +41,7 @@ export class ProgressBarLoader implements Loader {
    readonly name = 'ProgressBarLoader'
  }
  
-export class SnackbarError extends AppError { // Just regular `Error` with name added
+export class SnackbarError extends AppError { // Just a regular `Error` with name property added
    readonly name = 'SnackbarError'
  }
 ```
