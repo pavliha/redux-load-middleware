@@ -20,7 +20,7 @@ contracts.ts
    readonly name = 'ProgressBarLoader'
  }
  
- export class SnackbarError extends AppError {
+ export class SnackbarError extends AppError { // Just `Error` with name added
    readonly name = 'SnackbarError'
  }
 ```
