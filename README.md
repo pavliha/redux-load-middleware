@@ -8,22 +8,32 @@ Redux Load Middleware enables simple, yet robust handling of async action creato
 api.ts
 ```typescript
 export const loginUser = async (values: LoginFormValues): Promise<LoginResponse> => {
-  const loginResponse = await http.post('/login', values)
-  return loginResponse
+  try {
+    const loginResponse = await http.post('/login', values)
+    return loginResponse
+  } catch (error) {
+    if(error.code === 401){
+      throw new FormError('Authorization failed.Please check your credentials')
+    }
+    if(error.code === 500){
+      throw new CoverError('Internal server error. Please try again later')
+    }
+    throw new SnackbarError('Connection error')  
+  }
 }
 ```
 
-why implements ,extends
+why implements, extends
 
 contracts.ts
 ```typescript
- import { AppError, Loader } from 'redux-load-middleware'
+import { Loader } from 'redux-load-middleware'
  
- export class ProgressBarLoader implements Loader {
+export class ProgressBarLoader implements Loader {
    readonly name = 'ProgressBarLoader'
  }
  
- export class SnackbarError extends AppError { // Just regular `Error` with name added
+export class SnackbarError extends Error { // Just regular `Error` with name added
    readonly name = 'SnackbarError'
  }
 ```
