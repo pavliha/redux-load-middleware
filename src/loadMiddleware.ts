@@ -1,5 +1,5 @@
 import { Dispatch, Middleware, MiddlewareAPI } from 'redux'
-import { AppError, LoadAction, PayloadAction, StatusState } from './types'
+import { GeneralError, LoadAction, PayloadAction, StatusState } from './types'
 import { clearStatus, hideLoading, showError, showLoading } from './action'
 import c from './constants'
 import { isStatusClear } from './selectors'
@@ -25,18 +25,17 @@ const handleSuccess = async (loadAction: GenericLoadAction, dispatch: Dispatch) 
 }
 
 const handleError = (error: Error, loadAction: GenericLoadAction, dispatch: Dispatch) => {
-  const myApplicationError = AppError
   const fallbackError = loadAction?.options?.error
-  const isApplicationError = error instanceof myApplicationError
-  if (isApplicationError) dispatch(showError(error))
-  if (!isApplicationError && fallbackError) dispatch(showError(fallbackError))
+  const isGeneralError = error instanceof GeneralError
+  if (isGeneralError) return dispatch(showError(error))
+  if (!isGeneralError && fallbackError) return dispatch(showError(fallbackError))
   throw error
 }
 
 const load = async (loadAction: GenericLoadAction, dispatch: Dispatch, state: StatusState) => {
   await handlePrepare(dispatch, state)
   try {
-    await handleSuccess(loadAction, dispatch)
+    return await handleSuccess(loadAction, dispatch)
   } catch (error) {
     handleError(error, loadAction, dispatch)
   } finally {

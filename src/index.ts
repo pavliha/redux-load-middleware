@@ -13,4 +13,4 @@ export {
 export { statusReducer } from './reducer'
 export { errorStatus, loadingStatus } from './selectors'
 
-export { Loader, LoadAction, PayloadAction, Type, AppError, StatusState } from './types'
+export { Loader, LoadAction, PayloadAction, Type, GeneralError, StatusState } from './types'

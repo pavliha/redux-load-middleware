@@ -1,8 +1,16 @@
 import { Action } from 'redux'
 import { statusReducer } from './reducer'
 
-export abstract class AppError extends Error {
-  abstract readonly name: string
+export class GeneralError extends Error {
+  public name: string
+  public message: string
+  constructor(message: string) {
+    super()
+    Object.setPrototypeOf(this, GeneralError.prototype)
+    Error.captureStackTrace(this, GeneralError)
+    this.name = 'GeneralError'
+    this.message = message
+  }
 }
 
 export interface Type<T> extends Function {
