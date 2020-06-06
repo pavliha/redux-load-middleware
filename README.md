@@ -13,7 +13,7 @@ export const loginUser = async (values: LoginFormValues): Promise<LoginResponse>
     return loginResponse
   } catch (error) {
     if(error.code === 401){
-      throw new FormError(error.message || 'Authorization failed. Please check your credentials')
+      throw new UnauthorizedError(error.message,error.response.data)
     }
     if(error.code === 500){
       throw new CoverError('Internal server error. Please try again later')
@@ -27,7 +27,7 @@ Defined errors will be caught by `loadMiddleware` and then be added to `_status:
 
 contracts.ts
 ```typescript
-import { Loader, AppError } from 'redux-load-middleware'
+import { Loader, GeneralError } from 'redux-load-middleware' 
 
  /*
     export abstract class AppError extends Error {
@@ -39,11 +39,25 @@ import { Loader, AppError } from 'redux-load-middleware'
 
 export class ProgressBarLoader implements Loader {
    readonly name = 'ProgressBarLoader'
- }
- 
-export class SnackbarError extends AppError { // Just a regular `Error` with name property added
+}
+
+export class CoverError extends GeneralError {  // Just a regular `Error` with name property added
+  readonly name = 'CoverError'
+}
+
+export class SnackbarError extends GeneralError { // Just a regular `Error` with name property added
    readonly name = 'SnackbarError'
  }
+
+export class UnauthorizedError extends GeneralError {  // Just a regular `Error` with name property added
+  readonly name = 'UnauthorizedError'
+  readonly fields: FieldErrors[]
+  constructor(message: string, fields: FieldErrors[]) {
+    super(message)
+    this.fields = fields
+  }
+}
+
 ```
 
 While promise is pending `SHOW_LOADER` action would be dispatched with loader from `options` property.
