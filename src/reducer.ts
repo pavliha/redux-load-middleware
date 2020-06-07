@@ -1,28 +1,28 @@
 import { StatusActions } from './action'
 import c from './constants'
-import { Loader } from './types'
+import { Loading } from './types'
 
 interface StatusState {
   error: Error | null
-  loader: Loader | null
+  loading: Loading | null
 }
 const INITIAL_STATE: StatusState = {
-  loader: null,
+  loading: null,
   error: null,
 }
 
 export const statusReducer = (state = INITIAL_STATE, action: StatusActions): StatusState => {
   switch (action.type) {
-    case c.SHOW_LOADER:
+    case c.SHOW_LOADING:
       return {
         ...state,
-        loader: action.payload,
+        loading: action.payload,
       }
 
-    case c.HIDE_LOADER:
+    case c.HIDE_LOADING:
       return {
         ...state,
-        loader: null,
+        loading: null,
       }
 
     case c.SHOW_ERROR:

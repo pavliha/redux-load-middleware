@@ -17,7 +17,7 @@ export interface Type<T> extends Function {
   new (...args: any[]): T
 }
 
-export interface Loader {
+export interface Loading {
   readonly name: string
 }
 
@@ -26,8 +26,8 @@ export interface LoadAction<Type, Response, Meta = {}> extends Action {
   load: Promise<Response>
   meta?: Meta
   options?: {
-    error?: Error
-    loader?: Loader
+    fallbackError?: Error
+    loading?: Loading
   }
 }
 

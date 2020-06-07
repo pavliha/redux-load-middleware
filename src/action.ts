@@ -1,21 +1,21 @@
 import { Action } from 'redux'
 import c from './constants'
-import { Loader, PayloadAction } from './types'
+import { Loading, PayloadAction } from './types'
 
-export type ShowLoadingAction = PayloadAction<c.SHOW_LOADER, Loader>
-export type HideLoadingAction = PayloadAction<c.HIDE_LOADER, Loader>
+export type ShowLoadingAction = PayloadAction<c.SHOW_LOADING, Loading>
+export type HideLoadingAction = PayloadAction<c.HIDE_LOADING, Loading>
 export type ShowErrorAction = PayloadAction<c.SHOW_ERROR, Error>
 export type ClearStatusAction = Action<c.CLEAR_STATUS>
 
 export type StatusActions = ShowLoadingAction | HideLoadingAction | ShowErrorAction | ClearStatusAction
 
-export const showLoading = (loader: Loader): ShowLoadingAction => ({
-  type: c.SHOW_LOADER,
-  payload: loader,
+export const showLoading = (loading: Loading): ShowLoadingAction => ({
+  type: c.SHOW_LOADING,
+  payload: loading,
 })
 
-export const hideLoading = (loader: Loader): HideLoadingAction => ({
-  type: c.HIDE_LOADER,
+export const hideLoading = (loader: Loading): HideLoadingAction => ({
+  type: c.HIDE_LOADING,
   payload: loader,
 })
 

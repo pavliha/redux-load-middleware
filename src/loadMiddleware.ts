@@ -12,35 +12,22 @@ const showSuccess = (loadAction: GenericLoadAction, response: unknown): PayloadA
   meta: loadAction.meta,
 })
 
-const handlePrepare = async (dispatch: Dispatch, state: StatusState) => {
-  if (!isStatusClear(state)) dispatch(clearStatus())
-}
-
-const handleSuccess = async (loadAction: GenericLoadAction, dispatch: Dispatch) => {
-  if (loadAction.options?.loader) {
-    dispatch(showLoading(loadAction.options.loader))
-  }
-  const response = await loadAction.load
-  dispatch(showSuccess(loadAction, response))
-}
-
-const handleError = (error: Error, loadAction: GenericLoadAction, dispatch: Dispatch) => {
-  const fallbackError = loadAction?.options?.error
-  const isGeneralError = error instanceof GeneralError
-  if (isGeneralError) return dispatch(showError(error))
-  if (!isGeneralError && fallbackError) return dispatch(showError(fallbackError))
-  throw error
-}
-
 const load = async (loadAction: GenericLoadAction, dispatch: Dispatch, state: StatusState) => {
-  await handlePrepare(dispatch, state)
+  if (!isStatusClear(state)) dispatch(clearStatus())
   try {
-    return await handleSuccess(loadAction, dispatch)
+    if (loadAction.options?.loading) dispatch(showLoading(loadAction.options.loading))
+    const response = await loadAction.load
+    dispatch(showSuccess(loadAction, response))
+    return response
   } catch (error) {
-    handleError(error, loadAction, dispatch)
+    const fallbackError = loadAction?.options?.fallbackError
+    const isGeneralError = error instanceof GeneralError
+    if (isGeneralError) return dispatch(showError(error))
+    if (!isGeneralError && fallbackError) return dispatch(showError(fallbackError))
+    throw error
   } finally {
-    if (loadAction.options?.loader) {
-      dispatch(hideLoading(loadAction.options.loader))
+    if (loadAction.options?.loading) {
+      dispatch(hideLoading(loadAction.options.loading))
     }
   }
 }
