@@ -16,7 +16,7 @@ export const loginUser = async (values: LoginFormValues): Promise<LoginResponse>
       throw new UnauthorizedError(error.message,error.response.data)
     }
     if(error.code === 500){
-      throw new CoverError('Internal server error. Please try again later')
+      throw new SnackbarError('Internal server error. Please try again later')
     }
     throw new SnackbarError('Connection error')  
   }
@@ -27,7 +27,7 @@ Defined errors will be caught by `loadMiddleware` and then be added to `_status:
 
 contracts.ts
 ```typescript
-import { Loader, GeneralError } from 'redux-load-middleware' 
+import { Loading, GeneralError } from 'redux-load-middleware' 
 
  /*
     export abstract class AppError extends Error {
@@ -37,8 +37,8 @@ import { Loader, GeneralError } from 'redux-load-middleware'
 
 // We need to extend all Errors, we want to use inside React Components, from AppError because loadMiddleware would check if it instanceOf AppError
 
-export class ProgressBarLoader implements Loader {
-   readonly name = 'ProgressBarLoader'
+export class ProgressBarLoader implements Loading {
+   readonly name = 'ProgressBarLoading'
 }
 
 export class CoverError extends GeneralError {  // Just a regular `Error` with name property added
@@ -60,7 +60,7 @@ export class UnauthorizedError extends GeneralError {  // Just a regular `Error`
 
 ```
 
-While promise is pending `SHOW_LOADER` action would be dispatched with loader from `options` property.
+While promise is pending `SHOW_LOADING` action would be dispatched with loader from `options` property.
 Similar to to [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware).
 After promise is successfully resolved `loadMiddleware` would append `_SUCCESS` suffix and dispatch `LOGIN_USER_SUCCESS` action.
 In case promise was rejected middleware would dispatch  `SHOW_ERROR` action that updates `_status` state which error or loader components are listening for.
@@ -78,8 +78,8 @@ export const login = (values: LoginFormValues): LoginAction => ({
   type: c.LOGIN_USER,
   load: loginUser(values), // 
   options:{
-    loader: new ProgressBarLoader(),
-    error: new ShackbarError('custom error message') // fallback error in case general Error was thrown
+    loader: new FormLoading(),
+    fallbackError: new ShackbarError('custom error message') // fallback error in case general Error was thrown
   }
 })
 ```
@@ -121,12 +121,12 @@ export const SnackbarErrorMessage = () => {
 TopProgressBarLoading.tsx
 ```typescript jsx
 import React from 'react'
-import { useLoader } from 'src/hooks'
+import { useLoading } from 'src/hooks'
 
-export const SnackbarErrorMessage = () => {
-  const loader = useLoader(ProgressBarLoader)
+export const ProgressBarLoader = () => {
+  const loading = useLoading(ProgressBarLoading)
   
-  if(!loader) return null
+  if(!loading) return null
 
   return (
     <div className="top-progress-bar" />
