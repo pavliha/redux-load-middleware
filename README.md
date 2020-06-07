@@ -184,19 +184,20 @@ export default reducer
 
 ```typescript jsx
 import { useSelector } from 'react-redux'
-import { AppError, errorStatus, Loader, loadingStatus } from 'redux-load-middleware'
+import { GeneralError, errorStatus, loadingStatus, Loading, Type } from 'redux-load-middleware'
+import { State } from 'src/store'
 
-export const useError = (errorType: Type<AppError>) => {
-  const error = useSelector(errorStatus)
-  const isSyncError = error instanceof errorType
-  if (!isSyncError) return null
+export function useError<E extends GeneralError>(errorType: Type<E>): E | null {
+  const error = useSelector((state: State) => errorStatus<E>(state))
+  const isSelectedError = error?.name === errorType.name
+  if (!isSelectedError) return null
   return error
 }
 
-export const useLoader = (loaderType: Type<Loader>) => {
-  const loading = useSelector(loadingStatus)
-  const isCorrectLoader = loading instanceof loaderType
-  if (!isCorrectLoader) return null
+export function useLoading<L extends Loading>(loadingType: Type<L>): L | null {
+  const loading = useSelector((state: State) => loadingStatus<L>(state))
+  const isSelectedLoading = loading?.name === loadingType.name
+  if (!isSelectedLoading) return null
   return loading
 }
 ```
