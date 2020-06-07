@@ -30,26 +30,26 @@ contracts.ts
 import { Loading, GeneralError } from 'redux-load-middleware' 
 
  /*
-    export abstract class AppError extends Error {
+    export abstract class GeneralError extends Error {
       abstract readonly name: string
     }
  */
 
-// We need to extend all Errors, we want to use inside React Components, from AppError because loadMiddleware would check if it instanceOf AppError
+// We need to extend all Errors, we want to use inside React Components, from GeneralError because loadMiddleware would check if it instanceOf AppError
 
 export class ProgressBarLoader implements Loading {
    readonly name = 'ProgressBarLoading'
 }
 
-export class CoverError extends GeneralError {  // Just a regular `Error` with name property added
+export class CoverError extends GeneralError {  // Just a regular `Error` with name property added and typescript fixes
   readonly name = 'CoverError'
 }
 
-export class SnackbarError extends GeneralError { // Just a regular `Error` with name property added
+export class SnackbarError extends GeneralError {
    readonly name = 'SnackbarError'
  }
 
-export class UnauthorizedError extends GeneralError {  // Just a regular `Error` with name property added
+export class UnauthorizedError extends GeneralError {
   readonly name = 'UnauthorizedError'
   readonly fields: FieldErrors[]
   constructor(message: string, fields: FieldErrors[]) {
