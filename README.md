@@ -3,6 +3,8 @@ Universal error and loading handler for React Apps
 
 Redux Load Middleware enables simple, yet robust handling of async action creators in [Redux](http://redux.js.org). 
 
+[Example project](https://github.com/pavliha/partymaker-new-admin). 
+
 ## Usage
 
 api.ts
