@@ -1,6 +1,6 @@
 {
   "name": "redux-load-middleware",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Loading and error handling for react apps",
   "author": "Pavel Kostiuk",
   "main": "dist/index.js",
@@ -9,6 +9,10 @@
   "jsnext:main": "dist/index.es.js",
   "license": "ISC",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pavliha/redux-load-middleware"
+  },
   "scripts": {
     "build": "rollup -c",
     "test": "jest --coverage"
