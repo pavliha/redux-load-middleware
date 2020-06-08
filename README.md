@@ -5,6 +5,50 @@ Redux Load Middleware enables simple, yet robust handling of async action creato
 
 [Example project](https://github.com/pavliha/partymaker-new-admin). 
 
+## Installation
+- Connect `loadMiddleware` to the store
+```typescript
+import { loadMiddleware } from 'redux-load-middleware'
+
+const store = createStore(reducers, compose(applyMiddleware(loadMiddleware)))
+```
+- Add `statusReducer` to the your reducers
+```typescript
+import { combineReducers } from 'redux'
+import { statusReducer } from 'redux-load-middleware'
+import auth from './auth/reducer'
+
+const reducer = combineReducers({
+  _status: statusReducer,
+  auth,
+})
+
+export default reducer
+```
+
+- Add helper hooks to the project
+
+```typescript jsx
+import { useSelector } from 'react-redux'
+import { GeneralError, errorStatus, loadingStatus, Loading, Type } from 'redux-load-middleware'
+import { State } from 'src/store'
+
+export function useError<E extends GeneralError>(errorType: Type<E>): E | null {
+  const error = useSelector((state: State) => errorStatus<E>(state))
+  const isSelectedError = error?.name === errorType.name
+  if (!isSelectedError) return null
+  return error
+}
+
+export function useLoading<L extends Loading>(loadingType: Type<L>): L | null {
+  const loading = useSelector((state: State) => loadingStatus<L>(state))
+  const isSelectedLoading = loading?.name === loadingType.name
+  if (!isSelectedLoading) return null
+  return loading
+}
+```
+
+
 ## Usage
 
 api.ts
@@ -26,18 +70,10 @@ export const loginUser = async (values: LoginFormValues): Promise<LoginResponse>
 ```
 
 Defined errors will be caught by `loadMiddleware` and then be added to `_status: statusReducer` where component can catch thrown errors with `useError` hook
-
+We need to extend all Errors, we want to use inside React Components, from GeneralError because  `loadMiddleware` would check if it instanceOf GeneralError
 contracts.ts
 ```typescript
 import { Loading, GeneralError } from 'redux-load-middleware' 
-
- /*
-    export abstract class GeneralError extends Error {
-      abstract readonly name: string
-    }
- */
-
-// We need to extend all Errors, we want to use inside React Components, from GeneralError because loadMiddleware would check if it instanceOf AppError
 
 export class ProgressBarLoader implements Loading {
    readonly name = 'ProgressBarLoading'
@@ -160,49 +196,6 @@ const App = () => {
 export default App
 ```
 
-
-## Setup
-- Connect `loadMiddleware` to the store
-```typescript
-import { loadMiddleware } from 'redux-load-middleware'
-
-const store = createStore(reducers, compose(applyMiddleware(loadMiddleware)))
-```
-- Add `statusReducer` to the your reducers
-```typescript
-import { combineReducers } from 'redux'
-import { statusReducer } from 'redux-load-middleware'
-import auth from './auth/reducer'
-
-const reducer = combineReducers({
-  _status: statusReducer,
-  auth,
-})
-
-export default reducer
-```
-
-- Add helper hooks to the project
-
-```typescript jsx
-import { useSelector } from 'react-redux'
-import { GeneralError, errorStatus, loadingStatus, Loading, Type } from 'redux-load-middleware'
-import { State } from 'src/store'
-
-export function useError<E extends GeneralError>(errorType: Type<E>): E | null {
-  const error = useSelector((state: State) => errorStatus<E>(state))
-  const isSelectedError = error?.name === errorType.name
-  if (!isSelectedError) return null
-  return error
-}
-
-export function useLoading<L extends Loading>(loadingType: Type<L>): L | null {
-  const loading = useSelector((state: State) => loadingStatus<L>(state))
-  const isSelectedLoading = loading?.name === loadingType.name
-  if (!isSelectedLoading) return null
-  return loading
-}
-```
 ## MIT License
 
 Copyright (c) 2020 Pavel Kostyuk
