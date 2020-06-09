@@ -59,7 +59,7 @@ export const loginUser = async (values: LoginFormValues): Promise<LoginResponse>
     return loginResponse
   } catch (error) {
     if(error.code === 401){
-      throw new UnauthorizedError(error.message,error.response.data)
+      throw new UnauthorizedError(error.message, error.response.data)
     }
     if(error.code === 500){
       throw new SnackbarError('Internal server error. Please try again later')
@@ -95,7 +95,6 @@ export class UnauthorizedError extends GeneralError {
     this.fields = fields
   }
 }
-
 ```
 
 While promise is pending `SHOW_LOADING` action would be dispatched with loader from `options` property.
