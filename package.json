@@ -1,6 +1,6 @@
 {
   "name": "redux-load-middleware",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "description": "Loading and error handling for react apps",
   "author": "Pavel Kostiuk",
   "main": "dist/index.js",
