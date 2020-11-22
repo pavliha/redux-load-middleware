@@ -12,7 +12,7 @@ It is quite verbose to write async calls with saga you have to write try-catch a
 Saga can be used for other things like calling other actions after updating the state. Which is the same as what you did before, just excluding error/loading handling.
 
 #### Why not redux-promise-middleware?
-redux-load-middleware works in the same way as redux-promise-middleware. But later you have to handle loading and errors manually. The redux-load-middleware has it's own errors reduced and loadingsReducer to which you just connect with selectors
+redux-load-middleware works in the same way as redux-promise-middleware. With redux-promise-middleware you have to handle loading and errors manually. The redux-load-middleware has it is own errorsReducer and loadingsReducer to which you just connect with selectors.
 ## Installation
 - Connect `loadMiddleware` to the store
 ```typescript
