@@ -42,7 +42,8 @@ Create action with `load` property that accepts `Promise`.
 Then come up with a name for `loading`. It is convenient to use the same name as action name. 
 ```typescript
 // actions.ts
-export type LoadUserAction = LoadAction<c.LOAD_USER>;
+import { LoadAction } from 'redux-load-middleware'
+type LoadUserAction = LoadAction<c.LOAD_USER>;
 
 export const loadUser = (): LoadUserAction => ({
   type: 'LOAD_USER',
@@ -96,6 +97,7 @@ Add `errors` property action
 Then come up with a name for `loading`. It is convenient to use the same name as action name. 
 ```typescript
 // actions.ts
+import { LoadAction } from 'redux-load-middleware'
 import { loadUserErrors } from './errors'
 export type LoadUserAction = LoadAction<c.LOAD_USER>;
 
