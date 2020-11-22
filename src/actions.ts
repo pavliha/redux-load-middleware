@@ -1,5 +1,4 @@
-import { Dictionary } from 'lodash';
-import { PayloadAction } from './types';
+import { PayloadAction, Dictionary } from './types';
 import { loadConstants } from './constants';
 
 export type SetLoadingAction = PayloadAction<loadConstants.SET_LOADING, string>;

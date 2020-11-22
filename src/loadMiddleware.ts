@@ -1,5 +1,5 @@
+import omit from 'lodash.omit';
 import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
-import { omit } from 'lodash';
 import { ErrorAction, GlobalErrorHandler } from './types';
 import { deriveErrorsFromAction } from './utils';
 

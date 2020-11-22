@@ -1,5 +1,4 @@
-import { isFunction } from 'lodash';
-import { ErrorAction, MiddlewareStore } from './types';
+import { ErrorAction, MiddlewareStore } from './types'
 
 export function createLoadingSelector(name: string) {
   return (state: MiddlewareStore) => state.loadings[name];
@@ -21,11 +20,14 @@ export function endsWithError(actionType: string) {
   return Boolean(/_ERROR$/.test(actionType));
 }
 
+
+const isFunction = <T,>(fn: T)=> typeof fn === 'function'
+
 const deriveErrorEntries = (payload: Error) => ([key, errorOrTransformer]: [
   string,
   unknown | ((error: Error) => unknown),
 ]) => {
-  const message = isFunction(errorOrTransformer) ? errorOrTransformer(payload) : errorOrTransformer;
+  const message = isFunction(errorOrTransformer) ? (errorOrTransformer as ((error: Error) => unknown))(payload) : errorOrTransformer;
   return [key, message];
 };
 

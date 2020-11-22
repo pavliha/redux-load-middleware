@@ -1,8 +1,8 @@
-import { Dictionary, omit } from 'lodash';
+import omit from 'lodash.omit';
 import { deriveErrorsFromAction, endsWithError, endsWithPending } from './utils';
 import { RemoveErrorAction, RemoveLoadingAction, SetErrorAction } from './actions';
 import { loadConstants } from './constants';
-import { ErrorAction, ErrorsState, PendingAction } from './types';
+import { ErrorAction, ErrorsState, PendingAction, Dictionary } from './types';
 
 type ErrorActions =
   | PendingAction<string>

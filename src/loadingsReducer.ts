@@ -1,5 +1,5 @@
-import { LoadingsState } from 'packages/redux-load-middleware/src/types';
-import { omit } from 'lodash';
+import { LoadingsState } from './types';
+import omit from 'lodash.omit';
 import { endsWithError, endsWithPending, endsWithSuccess } from './utils';
 import { RemoveLoadingAction, SetLoadingAction, RemoveErrorAction } from './actions';
 import { loadConstants } from './constants';

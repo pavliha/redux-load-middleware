@@ -1,4 +1,7 @@
-import { Dictionary } from 'lodash';
+
+export interface Dictionary<T> {
+  [index: string]: T;
+}
 
 export type LoadingsState = Dictionary<boolean>;
 
@@ -15,7 +18,7 @@ export type ErrorHandler = (error: Error) => ErrorsState;
 export type GlobalErrorHandler<Error = any> = (state: ErrorsState, action: ErrorAction<string, Error>) => ErrorsState;
 
 
-export interface Action<T = string, R = unknown, M = unknown, E = Error> {
+export interface Action<T = string, R = unknown> {
   type: T;
   payload?: R;
   loading?: string;
