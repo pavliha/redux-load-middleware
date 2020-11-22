@@ -1,6 +1,6 @@
 {
   "name": "redux-load-middleware",
-  "version": "0.0.12",
+  "version": "1.0.0",
   "description": "Loading and error handling for react apps",
   "author": "Pavel Kostiuk",
   "main": "dist/index.js",
@@ -32,10 +32,8 @@
   "devDependencies": {
     "prettier": "^2.0.5",
     "@types/jest": "^25.2.3",
-    "@types/lodash.isempty": "^4.4.6",
     "@types/react-redux": "^7.1.9",
     "jest": "^26.0.1",
-    "lodash.isempty": "^4.4.0",
     "rollup": "^2.13.1",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",

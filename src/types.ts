@@ -1,42 +1,38 @@
-import { Action } from 'redux'
-import { statusReducer } from './reducer'
+import { Dictionary } from 'lodash';
 
-export class GeneralError extends Error {
-  public name: string
-  public message: string
-  constructor(message: string) {
-    super()
-    Object.setPrototypeOf(this, GeneralError.prototype)
-    Error.captureStackTrace(this, GeneralError)
-    this.name = 'GeneralError'
-    this.message = message
-  }
+export type LoadingsState = Dictionary<boolean>;
+
+export type ErrorsState<Message = unknown> = Dictionary<Message>;
+
+export type MiddlewareStore = {
+  loadings: LoadingsState;
+  errors: ErrorsState;
+};
+
+export type ErrorHandler = (error: Error) => ErrorsState;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type GlobalErrorHandler<Error = any> = (state: ErrorsState, action: ErrorAction<string, Error>) => ErrorsState;
+
+
+export interface Action<T = string, R = unknown, M = unknown, E = Error> {
+  type: T;
+  payload?: R;
+  loading?: string;
+  errors?: ErrorsState | ErrorHandler;
 }
 
-export interface Type<T> extends Function {
-  new (...args: any[]): T
+export interface LoadAction<T, R = unknown> extends Action<T, R> {
+  load: Promise<R>;
 }
 
-export interface Loading {
-  readonly name: string
+export interface PayloadAction<T, R> extends Action<T> {
+  payload: R;
 }
 
-export interface LoadAction<Type, Response, Meta = {}> extends Action {
-  type: Type
-  load: Promise<Response>
-  meta?: Meta
-  options?: {
-    fallbackError?: Error
-    loading?: Loading
-  }
-}
+export type PendingAction<T> = Action<T>;
 
-export interface PayloadAction<Type, Response, Meta = {}> extends Action {
-  type: Type
-  payload: Response
-  meta?: Meta
+export interface ErrorAction<T, E = Error> extends Action<T> {
+  payload: E;
 }
-
-export type StatusState = {
-  _status: ReturnType<typeof statusReducer>
-}
+export type Meta<T> = { meta: T };

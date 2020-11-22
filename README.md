@@ -1,199 +1,150 @@
 # Redux Load Middleware
-Universal error and loading handler for React Apps
+Error and loading handler for React Apps
 
 Redux Load Middleware enables simple, yet robust handling of async action creators in [Redux](http://redux.js.org). 
 
-[Example project](https://github.com/pavliha/partymaker-new-admin). 
+I wrote redux-load-middleware to make basic stuff like error and loading handling seamless. So you could focus on stuff that matters.
 
+#### Why not redux-saga?
+It possible and even encouraged to use redux-load-middleware in conjunction with redux-saga. Think of redux-load-middleware as it's just util that handles loading and errors for you, for many other things you can use redux-saga.
+It is quite verbose to write async calls with saga you have to write try-catch all the time. And error and loading handling often mix with business logic as a result it becomes harder to read sagas.
+
+Saga can be used for other things like calling other actions after updating the state. Which is the same as what you did before, just excluding error/loading handling.
+
+#### Why not redux-promise-middleware?
+redux-load-middleware works in the same way as redux-promise-middleware. But later you have to handle loading and errors manually. The redux-load-middleware has it's own errors reduced and loadingsReducer to which you just connect with selectors
 ## Installation
 - Connect `loadMiddleware` to the store
 ```typescript
-import { loadMiddleware } from 'redux-load-middleware'
+import { createLoadMiddleware } from 'redux-load-middleware'
 
+const loadMiddleware = createLoadMiddleware()
 const store = createStore(reducers, compose(applyMiddleware(loadMiddleware)))
 ```
-- Add `statusReducer` to the your reducers
+- Add `loadingsReducer` and `errorsReducer` to your reducers
 ```typescript
+// store.ts
 import { combineReducers } from 'redux'
-import { statusReducer } from 'redux-load-middleware'
-import auth from './auth/reducer'
+import { loadingsReducer, errorsReducer } from 'redux-load-middleware'
 
 const reducer = combineReducers({
-  _status: statusReducer,
-  auth,
+  loadings: loadingsReducer,
+  errors: errorsReducer,
+  //...your other reducers
 })
 
 export default reducer
 ```
 
-- Add helper hooks to the project
-
-```typescript jsx
-import { useSelector } from 'react-redux'
-import { GeneralError, errorStatus, loadingStatus, Loading, Type } from 'redux-load-middleware'
-import { State } from 'src/store'
-
-export function useError<E extends GeneralError>(errorType: Type<E>): E | null {
-  const error = useSelector((state: State) => errorStatus<E>(state))
-  const isSelectedError = error?.name === errorType.name
-  if (!isSelectedError) return null
-  return error
-}
-
-export function useLoading<L extends Loading>(loadingType: Type<L>): L | null {
-  const loading = useSelector((state: State) => loadingStatus<L>(state))
-  const isSelectedLoading = loading?.name === loadingType.name
-  if (!isSelectedLoading) return null
-  return loading
-}
-```
-
-
 ## Usage
-
-api.ts
+#### Adding loading handler
+Create action with `load` property that accepts `Promise`.
+Then come up with a name for `loading`. It is convenient to use the same name as action name. 
 ```typescript
-export const loginUser = async (values: LoginFormValues): Promise<LoginResponse> => {
-  try {
-    const loginResponse = await http.post('/login', values)
-    return loginResponse
-  } catch (error) {
-    if(error.code === 401){
-      throw new UnauthorizedError(error.message, error.response.data)
-    }
-    if(error.code === 500){
-      throw new SnackbarError('Internal server error. Please try again later')
-    }
-    throw new SnackbarError('Connection error')  
+// actions.ts
+export type LoadUserAction = LoadAction<c.LOAD_USER>;
+
+export const loadUser = (): LoadUserAction => ({
+  type: 'LOAD_USER',
+  load: api.user.load(), // returns Promise<User>
+  loading: 'loadUser', // this name will be used to reterive loading status from loadingsReducer
+});
+```
+When you `dispatch` load user action `LOAD_USER_PENDING`
+will be dispatched and in `loadings` state will set `loadUser` to `true`
+```js
+{
+  loadings: {
+    loadUser: true 
   }
 }
 ```
-
-Defined errors will be caught by `loadMiddleware` and then be added to `_status: statusReducer` where component can catch thrown errors with `useError` hook
-We need to extend all Errors, we want to use inside React Components, from GeneralError because  `loadMiddleware` would check if it instanceOf GeneralError
-contracts.ts
+With your selector just connect to `loadings` state. No need to handle loading in your reducer.
 ```typescript
-import { Loading, GeneralError } from 'redux-load-middleware' 
-
-export class ProgressBarLoader implements Loading {
-   readonly name = 'ProgressBarLoading'
-}
-
-export class CoverError extends GeneralError {  // Just a regular `Error` with name property added and typescript fixes
-  readonly name = 'CoverError'
-}
-
-export class SnackbarError extends GeneralError {
-   readonly name = 'SnackbarError'
- }
-
-export class UnauthorizedError extends GeneralError {
-  readonly name = 'UnauthorizedError'
-  readonly fields: FieldErrors[]
-  constructor(message: string, fields: FieldErrors[]) {
-    super(message)
-    this.fields = fields
-  }
-}
-```
-
-While promise is pending `SHOW_LOADING` action would be dispatched with loader from `options` property.
-Similar to to [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware).
-After promise is successfully resolved `loadMiddleware` would append `_SUCCESS` suffix and dispatch `LOGIN_USER_SUCCESS` action.
-In case promise was rejected middleware would dispatch  `SHOW_ERROR` action that updates `_status` state which error or loader components are listening for.
-
-
-actions.ts
-```typescript
-import { LoadAction, PayloadAction } from 'redux-load-middleware'
-import { loginUser } from './api'
-
-type LoginAction = LoadAction<c.LOGIN_USER, LoginResponse>
-type LoginSuccessAction = PayloadAction<c.LOGIN_USER_SUCCESS, LoginResponse>
-
-export const login = (values: LoginFormValues): LoginAction => ({
-  type: c.LOGIN_USER,
-  load: loginUser(values), // 
-  options:{
-    loader: new FormLoading(),
-    fallbackError: new ShackbarError('custom error message') // fallback error in case general Error was thrown
-  }
-})
-```
-
-### Options API
-| Property        | Type                 | Description                           |
-| -------------   |:-------------        |:-------------                         |
-| loader          |```Type<Loader>```    | Should be instanceof Loader interface |
-| error           | ```Type<AppError>``` | Should be instanceof AppLoader class  |
-
-This error component via `useError` hook will depend on `_status` state which in turn `loadMiddleware` would update based on promise from `loginUser` http request
-
-SnackbarErrorMessage.tsx
-```typescript jsx
-import React from 'react'
-import { clearStatus } from 'redux-load-middleware'
-import { useDispatch } from 'react-redux'
-import { SnackbarError } from 'src/store/contracts'
-import { useError } from 'src/hooks'
-
-export const SnackbarErrorMessage = () => {
-  const error = useError(SnackbarError)
-  const dispatch = useDispatch()
-
-  const handleClose = () => {
-    dispatch(clearStatus())
-  }
+import { createLoadingSelector } from 'redux-load-middleware'
   
-  if(!error) return null
+export const selectUserLoading = createLoadingSelector('loadUser')
+```
+After `Promise` resolves `LOAD_USER_SUCCESS` will be dispatched with `payload: User`. So you can just listen for `LOAD_USER_SUCCESS`, ether from your reducer or sagas. 
+```typescript
+import { PayloadAction } from 'redux-load-middleware'
+import { User } from 'api'
 
-  return (
-    <div className="snackbar" onClick={handleClose}>
-        {error.message}
-    </div>
-  )
+const LoadUserSuccessAction = PayloadAction<'LOAD_USER_SUCCESS', User>;
+
+const authReducer = (state, action: LoadUserSuccessAction)=>{
+    switch (action){
+      case 'LOAD_USER_SUCCESS':
+        return {
+          user: action.payload
+        }
+    default:
+       return state
+    }
 }
 ```
 
-TopProgressBarLoading.tsx
-```typescript jsx
-import React from 'react'
-import { useLoading } from 'src/hooks'
-
-export const ProgressBarLoader = () => {
-  const loading = useLoading(ProgressBarLoading)
-  
-  if(!loading) return null
-
-  return (
-    <div className="top-progress-bar" />
-   )
+Action `LOAD_USER_SUCCESS` will also remove `loadUser` from `loadings`.
+```js
+{
+  loadings: { }
 }
 ```
 
-And then we could add error component created above to anywhere inside app. For example:
-App.tsx
-```typescript jsx
-import React from 'react'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import { LoginPage, SnackbarErrorMessage, TopProgressBarLoading } from 'src/components'
+#### Adding error handling
+Add `errors` property action
+Then come up with a name for `loading`. It is convenient to use the same name as action name. 
+```typescript
+// actions.ts
+import { loadUserErrors } from './errors'
+export type LoadUserAction = LoadAction<c.LOAD_USER>;
 
-const App = () => {
-  return (
-      <ReduxProvider store={store}>
-        <TopProgressBarLoading/>
-        <BrowserRouter>
-          <Switch>
-            <Route path="/auth/login" component={LoginPage}/>
-          </Switch>
-        </BrowserRouter>
-        <SnackbarErrorMessage />
-      </ReduxProvider>
-  )
-}
-
-export default App
+export const loadUser = (): LoadUserAction => ({
+  type: 'LOAD_USER',
+  load: api.user.load(),
+  loading: 'loadUser',
+  errors: loadUserErrors
+});
 ```
+Create errors object and come up with a name for error that your UI will handle for example `alertError`.
+```typescript
+// errors.ts
+import { HttpError } from 'api'
+
+const loadUserErrors = {
+  alertError: (error: Error): string | undefined => {
+    if(!(error instanceof  HttpError)) return
+    if(error.type === ErrorTypes.DEVICE_OFFLINE) return 'Your device offline!'
+    if(error.type === ErrorTypes.FORBIDDEN) return 'Please authorize first!'
+  },
+  formError: (error: Error) => {} // your logic for hadling form errors
+}
+```
+When you `dispatch` `loadUser` action and `Promise` gets rejected `LOAD_USER_ERROR`
+will be dispatched and in `errors` state will set `alertError` to 
+```js
+{
+  loadings: {}
+  errors: {  
+    alertUser: 'Please authorize first!'
+  }
+}
+```
+You can retrieve error message from state using `createErrorSelector` helper using `alertError` key.
+```typescript
+import { createErrorSelector } from 'redux-load-middleware';
+import { createSelector, Selector } from 'reselect';
+import { State } from 'src/store/reducer';
+
+
+export const selectAlertErrorMessage: Selector<State, string | null> = createSelector(
+  createErrorSelector('alertError'),
+  (message) => message ? message : null,
+);
+```
+
+In case `LOAD_USER_SUCCESS` errors will be cleared.
+
 
 ## MIT License
 

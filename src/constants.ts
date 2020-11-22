@@ -1,12 +1,7 @@
-enum c {
-
-  /**
-   * status actions
-   */
-  SHOW_LOADING = 'SHOW_LOADING',
-  HIDE_LOADING = 'HIDE_LOADING',
-  SHOW_ERROR = 'SHOW_ERROR',
+export enum loadConstants {
+  SET_LOADING = 'SET_LOADING',
+  REMOVE_LOADING = 'REMOVE_LOADING',
+  SET_ERROR = 'SET_ERROR',
+  REMOVE_ERROR = 'REMOVE_ERROR',
   CLEAR_STATUS = 'CLEAR_STATUS',
 }
-
-export default c

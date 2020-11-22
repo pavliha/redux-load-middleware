@@ -1,42 +1,39 @@
-import { Dispatch, Middleware, MiddlewareAPI } from 'redux'
-import { GeneralError, LoadAction, PayloadAction, StatusState } from './types'
-import { clearStatus, hideLoading, showError, showLoading } from './action'
-import c from './constants'
-import { isStatusClear } from './selectors'
+import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
+import { omit } from 'lodash';
+import { ErrorAction, GlobalErrorHandler } from './types';
+import { deriveErrorsFromAction } from './utils';
 
-type GenericLoadAction = LoadAction<keyof c, unknown>
+export const createLoadMiddleware = (globalErrorHandler?: GlobalErrorHandler) => {
+  const loadMiddleware: Middleware = ({ dispatch, getState }: MiddlewareAPI) => (next: Dispatch) => (action) => {
+    if (!action.load) return next(action);
+    const state = getState();
+    const loadAction = omit(action, 'load');
+    dispatch({
+      ...loadAction,
+      type: `${action.type}_PENDING`,
+    });
+    return action.load
+      .then((response: unknown) =>
+        dispatch({
+          ...loadAction,
+          type: `${action.type}_SUCCESS`,
+          payload: response,
+        }),
+      )
+      .catch((error: unknown) => {
+        const errorAction = {
+          ...loadAction,
+          type: `${action.type}_ERROR`,
+          payload: error,
+        } as ErrorAction<string>;
+        const hasErrors = globalErrorHandler || errorAction.errors;
+        const errors = {
+          ...deriveErrorsFromAction(errorAction),
+          ...globalErrorHandler?.(state.errors, errorAction),
+        };
+        return dispatch({ ...errorAction, errors: hasErrors ? errors : undefined });
+      });
+  };
 
-const showSuccess = (loadAction: GenericLoadAction, response: unknown): PayloadAction<string, unknown> => ({
-  type: loadAction.type + '_SUCCESS',
-  payload: response,
-  meta: loadAction.meta,
-})
-
-const load = async (loadAction: GenericLoadAction, dispatch: Dispatch, state: StatusState) => {
-  if (!isStatusClear(state)) dispatch(clearStatus())
-  try {
-    if (loadAction.options?.loading) dispatch(showLoading(loadAction.options.loading))
-    const response = await loadAction.load
-    dispatch(showSuccess(loadAction, response))
-    return response
-  } catch (error) {
-    const fallbackError = loadAction?.options?.fallbackError
-    const isGeneralError = error instanceof GeneralError
-    if (isGeneralError) return dispatch(showError(error))
-    if (!isGeneralError && fallbackError) return dispatch(showError(fallbackError))
-    throw error
-  } finally {
-    if (loadAction.options?.loading) {
-      dispatch(hideLoading(loadAction.options.loading))
-    }
-  }
-}
-
-const loadMiddleware: Middleware = ({ dispatch, getState }: MiddlewareAPI) => (next: Dispatch) => {
-  return async (action) => {
-    next(action)
-    if (action.load) return load(action, dispatch, getState())
-  }
-}
-
-export { loadMiddleware }
+  return loadMiddleware;
+};
