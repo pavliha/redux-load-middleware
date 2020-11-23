@@ -161,21 +161,36 @@ export const selectFormErrorMessage: Selector<State, string | null> = createSele
 ```
 
 In case `LOGIN_USER_SUCCESS` errors will be cleared.
-#### Setting errors manually
+#### Setting loading manually
 
-Create custom error
+In order to dispatch error with your custom data
 ```typescript
-import { setError, setLoading } from 'redux-load-middleware';
-import { createSelector, Selector } from 'reselect';
+import { setLoading } from 'react-load-middleware'
 
-class AnyError extends Error{
-  data: any
-  constructor(data) {
-    super('error message');
-    this.data = data
+dispatch(setLoading('manualLoading'))
+```
+This will dispatch `SET_LOADING` action and update store
+```js
+{
+  loadings: {  
+    manualLoading:  true
   }
 }
 ```
+To remove loading from `loadings` state
+```typescript
+import { removeLoading } from 'react-load-middleware'
+
+dispatch(removeLoading('manualLoading'))
+```
+Will dispatch `REMOVE_LOADING` action and update state:
+```js
+{
+  loadings: {}
+}
+```
+#### Setting errors manually
+
 In order to dispatch error with your custom data
 ```typescript
 import { setError } from 'react-load-middleware'
@@ -196,7 +211,12 @@ import { removeError } from 'react-load-middleware'
 
 dispatch(removeError('loginUser'))
 ```
-
+Will dispatch `REMOVE_ERROR` action and update store
+```js
+{
+  errors: {}
+}
+```
 
 ## MIT License
 
