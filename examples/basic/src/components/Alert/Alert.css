@@ -1,0 +1,8 @@
+.alert{
+    position: absolute;
+    left: 56px;
+    bottom: 56px;
+    background: red;
+    padding: 16px;
+    color: white;
+}
