@@ -161,6 +161,18 @@ export const selectFormErrorMessage: Selector<State, string | null> = createSele
 ```
 
 In case `LOGIN_USER_SUCCESS` errors will be cleared.
+```js
+{
+  loadings: {}
+  errors: {}
+  auth: { 
+    user: { 
+      id: 1
+      name: 'John Doe'
+    }
+ }
+}
+```
 #### Setting loading manually
 
 In order to dispatch error with your custom data
