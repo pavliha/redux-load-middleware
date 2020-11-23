@@ -128,7 +128,7 @@ will be dispatched and in `errors` state will set `alertError` to
 {
   loadings: {}
   errors: {  
-    alertUser: 'Please authorize first!'
+    alertError: 'Please authorize first!'
   }
 }
 ```
