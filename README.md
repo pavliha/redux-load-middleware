@@ -1,6 +1,8 @@
 # Redux Load Middleware
 Error and loading handler for React Apps
 
+See example project [here](https://github.com/pavliha/redux-load-middleware/tree/master/examples/basic)
+
 Redux Load Middleware enables simple, yet robust handling of async action creators in [Redux](http://redux.js.org). 
 
 I wrote redux-load-middleware to make basic stuff like error and loading handling seamless. So you could focus on stuff that matters.
