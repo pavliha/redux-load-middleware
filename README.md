@@ -43,20 +43,20 @@ Then come up with a name for `loading`. It is convenient to use the same name as
 ```typescript
 // actions.ts
 import { LoadAction } from 'redux-load-middleware'
-type LoadUserAction = LoadAction<c.LOAD_USER>;
+type LoginUserAction = LoadAction<c.LOGIN_USER>;
 
-export const loadUser = (): LoadUserAction => ({
-  type: 'LOAD_USER',
-  load: api.user.load(), // returns Promise<User>
-  loading: 'loadUser', // this name will be used to reterive loading status from loadingsReducer
+export const loginUser = (): LoginUserAction => ({
+  type: 'LOGIN_USER',
+  load: api.user.login(), // returns Promise<User>
+  loading: 'loginUser', // this name will be used to reterive loading status from loadingsReducer
 });
 ```
-When you `dispatch` load user action `LOAD_USER_PENDING`
-will be dispatched and in `loadings` state will set `loadUser` to `true`
+When you `dispatch` load user action `LOGIN_USER_PENDING`
+will be dispatched and in `loadings` state will set `loginUser` to `true`
 ```js
 {
   loadings: {
-    loadUser: true 
+    loginUser: true 
   }
 }
 ```
@@ -64,18 +64,18 @@ With your selector just connect to `loadings` state. No need to handle loading i
 ```typescript
 import { createLoadingSelector } from 'redux-load-middleware'
   
-export const selectUserLoading = createLoadingSelector('loadUser')
+export const selectUserLoading = createLoadingSelector('loginUser')
 ```
-After `Promise` resolves `LOAD_USER_SUCCESS` will be dispatched with `payload: User`. So you can just listen for `LOAD_USER_SUCCESS`, ether from your reducer or sagas. 
+After `Promise` resolves `LOGIN_USER_SUCCESS` will be dispatched with `payload: User`. So you can just listen for `LOGIN_USER_SUCCESS`, ether from your reducer or sagas. 
 ```typescript
 import { PayloadAction } from 'redux-load-middleware'
 import { User } from 'api'
 
-const LoadUserSuccessAction = PayloadAction<'LOAD_USER_SUCCESS', User>;
+const LoginUserSuccessAction = PayloadAction<'LOGIN_USER_SUCCESS', User>;
 
-const authReducer = (state, action: LoadUserSuccessAction)=>{
+const authReducer = (state, action: LoginUserSuccessAction)=>{
     switch (action){
-      case 'LOAD_USER_SUCCESS':
+      case 'LOGIN_USER_SUCCESS':
         return {
           user: action.payload
         }
@@ -85,7 +85,7 @@ const authReducer = (state, action: LoadUserSuccessAction)=>{
 }
 ```
 
-Action `LOAD_USER_SUCCESS` will also remove `loadUser` from `loadings`.
+Action `LOGIN_USER_SUCCESS` will also remove `loginUser` from `loadings`.
 ```js
 {
   loadings: { }
@@ -98,37 +98,45 @@ Then come up with a name for `loading`. It is convenient to use the same name as
 ```typescript
 // actions.ts
 import { LoadAction } from 'redux-load-middleware'
-import { loadUserErrors } from './errors'
-export type LoadUserAction = LoadAction<c.LOAD_USER>;
+import { loginUserErrors } from './errors'
+export type LoginUserAction = LoadAction<c.LOGIN_USER>;
 
-export const loadUser = (): LoadUserAction => ({
-  type: 'LOAD_USER',
-  load: api.user.load(),
-  loading: 'loadUser',
-  errors: loadUserErrors
+export const loginUser = (): LoginUserAction => ({
+  type: 'LOGIN_USER',
+  load: api.user.login(),
+  loading: 'loginUser',
+  errors: loginUserErrors
 });
 ```
 Create errors object and come up with a name for error that your UI will handle for example `alertError`.
 ```typescript
 // errors.ts
-import { HttpError } from 'api'
+import { HttpError, AxiosError } from 'api'
 
-const loadUserErrors = {
+export const loginUserErrors = {
+  // any error can me accepted
   alertError: (error: Error): string | undefined => {
     if(!(error instanceof  HttpError)) return
     if(error.type === ErrorTypes.DEVICE_OFFLINE) return 'Your device offline!'
-    if(error.type === ErrorTypes.FORBIDDEN) return 'Please authorize first!'
+    return 'Something happened. Try again later'
   },
-  formError: (error: Error) => {} // your logic for hadling form errors
+  // you can return any data type string used here as an example
+  formError: (error: AxiosError): string | undefined => { 
+     // your data from api response for example 'This email already taken!'
+    const message = error?.response?.message
+    if(message) return message
+  } 
 }
 ```
-When you `dispatch` `loadUser` action and `Promise` gets rejected `LOAD_USER_ERROR`
+When you `dispatch` `loginUser` action and `Promise` gets rejected `LOGIN_USER_ERROR`
 will be dispatched and in `errors` state will set `alertError` to 
 ```js
 {
   loadings: {}
   errors: {  
-    alertError: 'Please authorize first!'
+    alertError: 'Your device is offline!'
+    // OR if form error has occured
+    formError: 'This email already taken!'
   }
 }
 ```
@@ -143,9 +151,14 @@ export const selectAlertErrorMessage: Selector<State, string | null> = createSel
   createErrorSelector('alertError'),
   (message) => message ? message : null,
 );
+
+export const selectFormErrorMessage: Selector<State, string | null> = createSelector(
+  createErrorSelector('formError'),
+  (message) => message ? message : null,
+);
 ```
 
-In case `LOAD_USER_SUCCESS` errors will be cleared.
+In case `LOGIN_USER_SUCCESS` errors will be cleared.
 
 
 ## MIT License
