@@ -36,7 +36,7 @@ const reducer = combineReducers({
 export default reducer
 ```
 
-## Usage
+## Getting Started
 #### Adding loading handler
 Create action with `load` property that accepts `Promise`.
 Then come up with a name for `loading`. It is convenient to use the same name as action name. 
