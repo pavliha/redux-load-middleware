@@ -22,7 +22,6 @@ export const LoginForm = ({ pending, errors, onSubmit }: Props) => {
       password: formData.get('password') as string,
       connection: !formData.get('connection'),
     }
-    debugger
     onSubmit(values)
   }
 
