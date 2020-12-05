@@ -17,7 +17,7 @@ export const errorsReducer = (state = INITIAL_STATE, action: ErrorActions): Erro
   if (action.type === loadConstants.SET_ERROR) {
     return {
       ...state,
-      ...(action.payload as Dictionary<Error>),
+      ...(action.payload as Dictionary<unknown>),
     };
   }
 

@@ -18,13 +18,13 @@ export const createLoadMiddleware = (globalErrorHandler?: GlobalErrorHandler) =>
           ...loadAction,
           type: `${action.type}_SUCCESS`,
           payload: response,
-        }),
+        })
       )
       .catch((error: unknown) => {
         const errorAction = {
           ...loadAction,
           type: `${action.type}_ERROR`,
-          payload: error,
+          payload: error ?? new Error('Unknown error! Promise rejected without error.'),
         } as ErrorAction<string>;
         const hasErrors = globalErrorHandler || errorAction.errors;
         const errors = {

@@ -221,7 +221,7 @@ To remove error from `errors` state
 ```typescript
 import { removeError } from 'react-load-middleware'
 
-dispatch(removeError('loginUser'))
+dispatch(removeError('manualError'))
 ```
 Will dispatch `REMOVE_ERROR` action and update store
 ```js
