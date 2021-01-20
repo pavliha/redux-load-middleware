@@ -117,9 +117,8 @@ import { HttpError, AxiosError } from 'api'
 
 export const loginUserErrors = {
   // any error can me accepted
-  alertError: (error: Error): string | undefined => {
-    if(!(error instanceof  HttpError)) return
-    if(error.type === ErrorTypes.DEVICE_OFFLINE) return 'Your device offline!'
+  alertError: (): string | undefined => {
+    // your error handling goes here
     return 'Something happened. Try again later'
   },
   // you can return any data type string used here as an example
@@ -149,10 +148,7 @@ import { createSelector, Selector } from 'reselect';
 import { State } from 'src/store/reducer';
 
 
-export const selectAlertErrorMessage: Selector<State, string | null> = createSelector(
-  createErrorSelector('alertError'),
-  (message) => message ? message : null,
-);
+export const selectAlertErrorMessage = createErrorSelector('alertError')
 
 export const selectFormErrorMessage: Selector<State, string | null> = createSelector(
   createErrorSelector('formError'),
@@ -251,4 +247,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
