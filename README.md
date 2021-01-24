@@ -116,15 +116,15 @@ Create errors object and come up with a name for error that your UI will handle 
 import { HttpError, AxiosError } from 'api'
 
 export const loginUserErrors = {
-  // any error can me accepted
   alertError: (): string | undefined => {
     // your error handling goes here
     return 'Something happened. Try again later'
   },
-  // you can return any data type string used here as an example
+  // any type of error can me accepted
   formError: (error: AxiosError): string | undefined => { 
      // your data from api response for example 'This email already taken!'
     const message = error?.response?.message
+    // you can return any data type string used here as an example
     if(message) return message
   } 
 }
