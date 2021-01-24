@@ -113,7 +113,7 @@ export const loginUser = (): LoginUserAction => ({
 Create errors object and come up with a name for error that your UI will handle for example `alertError`.
 ```typescript
 // errors.ts
-import { HttpError, AxiosError } from 'api'
+import { AxiosError } from 'api'
 
 export const loginUserErrors = {
   alertError: (): string | undefined => {
